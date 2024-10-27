@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db59b21aa845954087e22c4ccdb321d, type: 3}
+  m_Name: Katana
+  m_EditorClassIdentifier: 
+  weaponName: Katana
+  lightAttackDamage: 30
+  heavyAttackDamage: 37
+  skillAttackDamage: 47
+  damage: 35
+  prefab: {fileID: 8671300058951258016, guid: 24c0e5f157594ae41945129d5e09e72a, type: 3}
+  lightAttackAnimations:
+  - Attack1
+  - Attack2
+  - Attack3
+  - Attack4
+  - Attack2
+  - Attack3
+  - Attack4
+  heavyAttackAnimations:
+  - HeavyAttack1
+  - HeavyAttack2
+  - HeavyAttack3
+  skillAttackAnimation: Skill
