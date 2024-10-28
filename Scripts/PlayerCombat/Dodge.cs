@@ -99,7 +99,7 @@ public class Dodge : MonoBehaviour
     {
         isDodging = true;
 
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.225f);
 
         isDodging = false;
     }
