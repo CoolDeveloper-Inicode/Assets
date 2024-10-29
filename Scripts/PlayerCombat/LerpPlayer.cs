@@ -25,7 +25,7 @@ public class LerpPlayer : MonoBehaviour
                 return;
 
             if (playerCombatSystem.canTp && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) <= 8f 
-                && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) > 0.7f)
+                && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) > 0.5f)
             {
                 transform.DOMove(TargetOffset(cameraMovement.lockOnTargetTransform), 0.2f);
 
