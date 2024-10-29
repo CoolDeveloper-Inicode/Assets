@@ -118,7 +118,7 @@ public class EnemyHealth : MonoBehaviour
             }
             else
             {
-                isTakingDamageTimer = 0.35f;
+                isTakingDamageTimer = 0.45f;
                 enemyStance.enemyStanceAmount += 1f;
                     
                 //randomly chooses a damage animation
