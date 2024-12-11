@@ -33,9 +33,6 @@ public class PlayerMovementTutorial : MonoBehaviour
     private RaycastHit slopeHit;
     private bool exitingSlope;
 
-    [Header("Handle Falling")]
-    public float fallingDistance = -10f;
-
     public Transform orientation;
 
     float horizontalInput;
@@ -52,7 +49,8 @@ public class PlayerMovementTutorial : MonoBehaviour
     Rigidbody rb;
     CameraMovement cameraMovement;
 
-    bool canDoubleJump;
+    [HideInInspector]
+    public bool canDoubleJump;
     bool isDoubleJumping;
 
     float doubleJumpTimer;
@@ -89,19 +87,8 @@ public class PlayerMovementTutorial : MonoBehaviour
         }
         else
         {
+            anim.SetBool("IsJumping", true);
             rb.drag = 0;
-        }
-
-        if (rb.velocity.y < fallingDistance && !OnSlope() || !grounded && !readyToJump)
-        {
-            if (!isDoubleJumping)
-            {
-                anim.SetBool("IsJumping", true);
-            }
-            else
-            {
-                anim.SetBool("IsJumping", false);
-            }
         }
 
         #endregion

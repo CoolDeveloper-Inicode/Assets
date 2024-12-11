@@ -25,6 +25,9 @@ public class StepMovement : MonoBehaviour
         if (playerMovementTutorial.OnSlope())
             return;
 
+        if (!playerMovementTutorial.grounded)
+            return;
+
         ClimpSteps();
     }
 
@@ -32,11 +35,11 @@ public class StepMovement : MonoBehaviour
     {
         RaycastHit hitLower;
 
-        if (Physics.Raycast(lowerStepDetector.transform.position, playerObj.forward, out hitLower, 0.3f, layersToStepInto))
+        if (Physics.Raycast(lowerStepDetector.transform.position, playerObj.forward, out hitLower, 0.15f, layersToStepInto))
         {
             RaycastHit hitUpper;
 
-            if (!Physics.Raycast(upperStepDetector.transform.position, playerObj.forward, out hitUpper, 0.3f, layersToStepInto))
+            if (!Physics.Raycast(upperStepDetector.transform.position, playerObj.forward, out hitUpper, 0.25f, layersToStepInto))
             {
                 rb.position -= new Vector3(0, -stepSmooth, 0);
             }

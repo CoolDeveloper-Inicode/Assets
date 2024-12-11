@@ -16,9 +16,9 @@ MonoBehaviour:
   detectionRadius: 25
   strafingDistance: 7
   attackingDistance: 3
-  damage: 25
+  damage: 15
   dodgingLikelyHood: 20
-  parryLikelyHood: 20
+  parryLikelyHood: 15
   rotationSpeed: 25
   isAggresive: 1
   isBoss: 0

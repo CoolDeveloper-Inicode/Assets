@@ -18,14 +18,13 @@ public class PlayerInteracting : MonoBehaviour
             {
                 if (other.CompareTag("Interactable"))
                 {
-                    interactingUI.SetActive(false);
-
                     IInteractable Iinteractable = other.GetComponent<IInteractable>();
                     Iinteractable.Interact();
                 }
             }
         }
 
+        //handle UI
         if (Physics.CheckSphere(transform.position, 10f, interactingLayer))
         {
             interactingUI.SetActive(true);

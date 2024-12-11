@@ -73,11 +73,11 @@ public class Dodge : MonoBehaviour
 
                     if (!playerMovementTutorial.OnSlope())
                     {
-                        rb.AddForce(dir * dodgeSpeed, ForceMode.Impulse);
+                        rb.AddForce(dir * dodgeSpeed * 10f, ForceMode.Impulse);
                     }
                     else
                     {
-                        rb.AddForce(playerMovementTutorial.GetSlopeMoveDirection() * dodgeSpeed, ForceMode.Impulse);
+                        rb.AddForce(playerMovementTutorial.GetSlopeMoveDirection() * dodgeSpeed * 10f, ForceMode.Impulse);
                     }
 
                     Quaternion targetRotation = Quaternion.LookRotation(dir);
