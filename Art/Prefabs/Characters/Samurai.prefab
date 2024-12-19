@@ -4466,6 +4466,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 16
   sprintSpeed: 19
+  slidingSpeed: 30
+  speedMultiplier: 3
   groundDrag: 5
   jumpForce: 20
   jumpCooldown: 0.87
@@ -4478,7 +4480,6 @@ MonoBehaviour:
     m_Bits: 64
   grounded: 0
   maxSlopeAngle: 45
-  fallingDistance: -6.5
   orientation: {fileID: 4979318302321700282}
   isSprinting: 0
   canDoubleJump: 0

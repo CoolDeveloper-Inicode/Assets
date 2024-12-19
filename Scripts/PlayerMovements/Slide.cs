@@ -12,7 +12,7 @@ public class Slide : MonoBehaviour
     float slidingCooldown;
     float slideInputBuffer;
 
-    [HideInInspector]
+    //[HideInInspector]
     public bool isSliding;
 
     [Header("Scripts")]

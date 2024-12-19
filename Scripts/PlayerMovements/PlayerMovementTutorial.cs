@@ -8,6 +8,9 @@ public class PlayerMovementTutorial : MonoBehaviour
     [Header("Movement")]
     public float walkSpeed;
     public float sprintSpeed;
+    public float slidingSpeed;
+
+    public float speedMultiplier;
 
     public float groundDrag;
 
@@ -39,6 +42,8 @@ public class PlayerMovementTutorial : MonoBehaviour
     float verticalInput;
 
     float speed;
+    float desiredMoveSpeed;
+    float lastDesiredMoveSpeed;
 
     [HideInInspector]
     public bool isSprinting;
@@ -48,6 +53,7 @@ public class PlayerMovementTutorial : MonoBehaviour
     Dodge dodge;
     Rigidbody rb;
     CameraMovement cameraMovement;
+    Slide slide;
 
     [HideInInspector]
     public bool canDoubleJump;
@@ -62,6 +68,7 @@ public class PlayerMovementTutorial : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         dodge = GetComponent<Dodge>();
+        slide = GetComponent<Slide>();
         cameraMovement = GetComponentInChildren<CameraMovement>();
         anim = GetComponentInChildren<Animator>();
         rb.freezeRotation = true;
@@ -109,16 +116,20 @@ public class PlayerMovementTutorial : MonoBehaviour
             }
             else
             {
-                if (dodge.canSprint)
+                if (slide.isSliding)
+                {
+                    desiredMoveSpeed = slidingSpeed;
+                }
+                else if (dodge.canSprint)
                 {
                     anim.SetFloat("Vertical", 2f, 0.2f, Time.deltaTime);
                     anim.SetFloat("Horizontal", 0f, 0.2f, Time.deltaTime);
-                    speed = sprintSpeed;
+                    desiredMoveSpeed = sprintSpeed;
                     isSprinting = true;
                 }
-                else
+                else if (!dodge.canSprint)
                 {
-                    speed = walkSpeed;
+                    desiredMoveSpeed = walkSpeed;
                     isSprinting = false;
 
                     if (cameraMovement.lockOnFlag)
@@ -175,6 +186,18 @@ public class PlayerMovementTutorial : MonoBehaviour
         {
             isDoubleJumping = false;
         }
+
+        if (Mathf.Abs(lastDesiredMoveSpeed - desiredMoveSpeed) > 4f && speed != 0f)
+        {
+            StopCoroutine("SmoothlyLerpMoveSpeed");
+            StartCoroutine("SmoothlyLerpMoveSpeed");
+        }
+        else
+        {
+            speed = desiredMoveSpeed;
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
     }
 
     private void FixedUpdate()
@@ -342,5 +365,30 @@ public class PlayerMovementTutorial : MonoBehaviour
         Jump();
 
         Invoke(nameof(ResetJump), jumpCooldown);
+    }
+
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - speed);
+        float startValue = speed;
+
+        while (time < difference)
+        {
+            speed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+
+            if (desiredMoveSpeed > speed)
+            {
+                time += Time.deltaTime * speedMultiplier;
+            }
+            else
+            {
+                time += Time.deltaTime;
+            }
+
+            yield return null;
+        }
+
+        speed = desiredMoveSpeed;
     }
 }
