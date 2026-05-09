@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Enemy
   detectionRadius: 15
-  strafingDistance: 7
+  strafingDistance: 6
   attackingDistance: 3
   damage: 15
-  dodgingLikelyHood: 10
-  parryLikelyHood: 5
+  dodgingLikelyHood: 25
+  parryLikelyHood: 100
   rotationSpeed: 25
   isAggresive: 0
   isBoss: 0

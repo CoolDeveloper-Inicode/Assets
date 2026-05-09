@@ -8,6 +8,8 @@ public class PlayerAnimatorController : MonoBehaviour
     public bool canRoll;
     [HideInInspector]
     public bool canDoCombo;
+    [HideInInspector]
+    public bool canLaunchUp;
 
     Animator anim;
     Rigidbody rb;
@@ -16,6 +18,7 @@ public class PlayerAnimatorController : MonoBehaviour
     PlayerDamage playerDamage;
     PlayerHealing playerHealing;
     PlayerCombatSystem playerCombatSystem;
+    PlayerMovementTutorial playerMovementTutorial;
 
     void Start()
     {
@@ -25,6 +28,7 @@ public class PlayerAnimatorController : MonoBehaviour
         effectsManager = GetComponentInParent<EffectsManager>();
         playerHealing = GetComponentInParent<PlayerHealing>();
         playerCombatSystem = GetComponentInParent<PlayerCombatSystem>();
+        playerMovementTutorial = GetComponentInParent<PlayerMovementTutorial>();
 
         playerDamage = GetComponentInChildren<PlayerDamage>();
 
@@ -85,6 +89,46 @@ public class PlayerAnimatorController : MonoBehaviour
         playerHealing.Healing();
     }
 
+    public void JumpUp()
+    {
+        playerMovementTutorial.TakeOf();
+    }
+
+    public void ResetSkillBool()
+    {
+        anim.SetBool("isSkillAttack", false);
+    }
+
+    public void LaunchEnemy()
+    {
+        canLaunchUp = true;
+    }
+
+    public void LaunchPlayer()
+    {
+        rb.AddForce(playerMovementTutorial.transform.up * 40f, ForceMode.Impulse);
+    }
+
+    public void DisableLaunchUp()
+    {
+        canLaunchUp = false;
+    }
+
+    public void SetLaunchBool()
+    {
+        anim.SetBool("isLaunching", false);
+    }
+
+    public void GroundPlayer()
+    {
+        rb.AddForce(-playerMovementTutorial.transform.up * 100f, ForceMode.Impulse);
+    }
+
+    public void SetGroundSlamBool()
+    {
+        anim.SetBool("isGroundSlam", false);
+    }
+
     #endregion
 
     #region Functions
@@ -108,6 +152,12 @@ public class PlayerAnimatorController : MonoBehaviour
         rb.drag = 0;
         Vector3 deltaPosition = anim.deltaPosition;
         Vector3 velocity = deltaPosition / delta;
+
+        if (anim.GetBool("isLaunching"))
+        {
+            velocity.y = rb.velocity.y;
+        }
+
         rb.velocity = velocity;
     }
 

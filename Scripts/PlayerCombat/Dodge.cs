@@ -26,6 +26,7 @@ public class Dodge : MonoBehaviour
     PlayerCombatSystem playerCombatSystem;
     Rigidbody rb;
     CharacterMeshTrail characterMeshTrail;
+    Parry parry;
 
     void Start()
     {
@@ -35,6 +36,7 @@ public class Dodge : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerCombatSystem = GetComponent<PlayerCombatSystem>();
         characterMeshTrail = GetComponent<CharacterMeshTrail>();
+        parry = GetComponent<Parry>();
     }
 
     void Update()
@@ -45,7 +47,7 @@ public class Dodge : MonoBehaviour
         if (isDodging)
             return;
 
-        if (!playerMovementTutorial.grounded)
+        if (parry.hasPerformedParry)
             return;
 
         #region Handle Whether If Player Is Dodging Or Sprinting
@@ -67,6 +69,9 @@ public class Dodge : MonoBehaviour
                 if (horizontalInput != 0 || verticalInput != 0)
                 {
                     Vector3 dir = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+                    isInvincible = true;
+                    isDodging = true;
 
                     playerAnimatorController.PlayTargetAnimation("Dodge", true);
                     Invoke(nameof(SpawnTrail), 0.07f);
@@ -97,18 +102,14 @@ public class Dodge : MonoBehaviour
 
     IEnumerator ResetDodge()
     {
-        isDodging = true;
-
-        yield return new WaitForSeconds(0.225f);
+        yield return new WaitForSeconds(0.13f);
 
         isDodging = false;
     }
 
     IEnumerator ResetInvincibility()
     {
-        isInvincible = true;
-
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
 
         isInvincible = false;
     }

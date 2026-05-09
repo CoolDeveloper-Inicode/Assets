@@ -40,7 +40,9 @@ public class PlayerDamage : MonoBehaviour
                 if (attackState.canParry)
                 {
                     parry.HasBeenParried();
-                    other.GetComponentInChildren<Animator>().Play("ParryHit");
+                    other.GetComponentInChildren<Animator>().Play("Block");
+                    other.GetComponent<Rigidbody>().AddForce(effectsManager.playerObj.forward * 60f, ForceMode.Impulse);
+                    rb.AddForce(effectsManager.playerObj.forward * 30f, ForceMode.Impulse);
                 }
                 else
                 {
@@ -55,11 +57,15 @@ public class PlayerDamage : MonoBehaviour
                     other.GetComponent<EnemyHealth>().TakeDamage(playerCombatSystem.currentWeapon.damage);
 
                     //handle the effects
-                    StartCoroutine(cameraShake.Shake(0.1f, 0.14f));
-                    hitStop.HitStopEffect(0.04f, 0.01f);
+                    StartCoroutine(cameraShake.Shake(0.1f, 0.15f));
+                    hitStop.HitStopEffect(0.04f, 0.015f);
 
-                    other.GetComponent<Rigidbody>().AddForce(effectsManager.playerObj.forward * 90f, ForceMode.Impulse);
-                    rb.AddForce(effectsManager.playerObj.forward * 25f, ForceMode.Impulse);
+                    if (!playerAnimatorController.canLaunchUp)
+                    {
+                        other.GetComponent<Rigidbody>().AddForce(effectsManager.playerObj.forward * 60f, ForceMode.Impulse);
+                    }
+
+                    rb.AddForce(effectsManager.playerObj.forward * 30f, ForceMode.Impulse);
 
                     //handle the sound
                     soundManager.PlayTargetSound(soundManager.lowVolumeAudioSource, soundManager.hitSwordSFX);

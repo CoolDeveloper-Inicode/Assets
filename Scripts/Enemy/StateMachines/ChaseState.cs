@@ -10,6 +10,8 @@ public class ChaseState : State
     public AttackState attackState;
     public EnemyHealth enemyHealth;
     public DeadState deadState;
+    public EnemyMovement enemyMovement;
+    public AirState airState;
 
     [HideInInspector]
     public bool chosenOne;
@@ -19,8 +21,11 @@ public class ChaseState : State
 
     public override State RunCurrentState()
     {
-        if (enemyHealth.isDead)
+        if (enemyHealth.isDead || enemyHealth.currentHealth <= 0f)
             return deadState;
+
+        if (!enemyMovement.grounded)
+            return airState;
 
         //resseting the strafing chance
         combatStanceState.rollForStrafeChance = false;

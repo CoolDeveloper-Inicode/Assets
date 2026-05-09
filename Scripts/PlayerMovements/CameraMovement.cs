@@ -19,6 +19,9 @@ public class CameraMovement : MonoBehaviour
     public Transform lockOnTargetTransform;
     public Transform lockOnPosition;
     public Transform currentCameraPosition;
+    public float smoothTime = 0.15f;
+
+    private Vector3 velocity = Vector3.zero;
 
     [HideInInspector]
     public bool lockOnFlag;
@@ -39,17 +42,20 @@ public class CameraMovement : MonoBehaviour
         currentCameraPosition.position = transform.position;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        if (Input.GetMouseButtonDown(2) && lockOnTargetTransform != null)
+        if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.C))
         {
-            if (lockOnFlag)
+            if (lockOnTargetTransform != null)
             {
-                lockOnFlag = false;
-            }
-            else
-            {
-                lockOnFlag = true;
+                if (lockOnFlag)
+                {
+                    lockOnFlag = false;
+                }
+                else
+                {
+                    lockOnFlag = true;
+                }
             }
         }
 
@@ -61,7 +67,7 @@ public class CameraMovement : MonoBehaviour
 
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 35f * Time.deltaTime);
 
-            transform.position = Vector3.Lerp(transform.position, lockOnPosition.position, 20f * Time.deltaTime);
+            transform.position = Vector3.SmoothDamp(transform.position, lockOnPosition.position, ref velocity, smoothTime);
             transform.rotation = Quaternion.Euler(lockOnPosition.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
         }
         else
@@ -77,7 +83,7 @@ public class CameraMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
             orientation.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
 
-            transform.position = currentCameraPosition.position;
+            transform.position = Vector3.SmoothDamp(transform.position, currentCameraPosition.position, ref velocity, smoothTime);
         }
 
         CheckForCameraCollisions();

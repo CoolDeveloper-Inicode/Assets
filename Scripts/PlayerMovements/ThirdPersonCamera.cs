@@ -18,9 +18,9 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void Start()
     {
-        playerMovementTutorial = GetComponentInParent<PlayerMovementTutorial>();
-        cameraMovement = GetComponentInParent<CameraMovement>();
-        dodge = GetComponentInParent<Dodge>();
+        playerMovementTutorial = FindObjectOfType<PlayerMovementTutorial>();
+        cameraMovement = FindObjectOfType<CameraMovement>();
+        dodge = FindObjectOfType<Dodge>();
     }
 
     void Update()
@@ -41,7 +41,16 @@ public class ThirdPersonCamera : MonoBehaviour
             Vector3 inputDir = orien.forward * verticalInput + orien.right * horizontalInput;
 
             if (inputDir != Vector3.zero)
-                playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, rotationSpeed * Time.deltaTime);
+            {
+                if (playerMovementTutorial.grounded)
+                {
+                    playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, rotationSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, rotationSpeed * playerMovementTutorial.airMultiplier * Time.deltaTime);
+                }
+            }
         }
         else
         {

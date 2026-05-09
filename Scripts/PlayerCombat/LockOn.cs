@@ -10,7 +10,7 @@ public class LockOn : MonoBehaviour
 
     void Start ()
     {
-        cameraMovement = GetComponentInChildren<CameraMovement>();
+        cameraMovement = FindObjectOfType<CameraMovement>();
     }
 
     void Update ()

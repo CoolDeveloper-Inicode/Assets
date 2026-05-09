@@ -14,29 +14,53 @@ public class EnemyHealth : MonoBehaviour
 
     float isTakingDamageTimer;
     float healthBarFadeTimer;
+    float airHitTimer;
 
-    float currentHealth;
+    [HideInInspector]
+    public float currentHealth;
 
     [HideInInspector]
     public bool isDead;
     [HideInInspector]
     public bool isInvincible;
+    [HideInInspector]
+    public float parryOrDodgeChance;
+    [HideInInspector]
+    public bool isLaunched;
 
     Animator anim;
+    Animator playerAnim;
+    PlayerAnimatorController playerAnimController;
+    GameObject player;
     EnemyManager enemyManager;
     AttackState attackState;
+    ChaseState chaseState;
+    Rigidbody rb;
+    EnemyMovement enemyMovement;
+    AirState airState;
+    StateManager state;
 
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
         attackState = GetComponentInChildren<AttackState>();
+        chaseState = GetComponentInChildren<ChaseState>();
+        airState = GetComponentInChildren<AirState>();
+        player = GameObject.Find("Samurai");
+        playerAnim = player.GetComponentInChildren<Animator>();
+        playerAnimController = player.GetComponentInChildren<PlayerAnimatorController>();
 
         enemyManager = GetComponent<EnemyManager>();
+        rb = GetComponent<Rigidbody>();
+        enemyMovement = GetComponent<EnemyMovement>();
+        state = GetComponent<StateManager>();
 
         currentHealth = maxHealth;
         enemyHealthUI.SetMaxHealth(maxHealth);
         enemyHealthUI.SetCurrentHealth(currentHealth);
         healthBar.SetActive(false);
+
+        parryOrDodgeChance = 25f;
     }
 
     void Update()
@@ -62,12 +86,16 @@ public class EnemyHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            anim.Play("Dead");
-            isDead = true;
-
-            if (bossHealthManager != null)
+            if (!playerAnim.GetBool("isSkillAttack"))
             {
-                bossHealthManager.DeactivateBossHealthBar();
+                anim.Play("Dead");
+                healthBar.SetActive(false);
+                isDead = true;
+
+                if (bossHealthManager != null)
+                {
+                    bossHealthManager.DeactivateBossHealthBar();
+                }
             }
         }
 
@@ -88,6 +116,18 @@ public class EnemyHealth : MonoBehaviour
             anim.SetBool("isTakingDamage", false);
         }
 
+        if (airHitTimer > 0f)
+        {
+            airHitTimer -= Time.deltaTime;
+        }
+        else
+        {
+            if (airHitTimer <= 0f)
+            {
+                anim.SetBool("isAirHit", false);
+            }
+        }
+
         #endregion
     }
 
@@ -99,75 +139,116 @@ public class EnemyHealth : MonoBehaviour
         if (isInvincible)
             return;
 
-        currentHealth -= damage;
-        enemyHealthUI.SetCurrentHealth(currentHealth);
+        #region Getting Out Of Stun Lock
 
-        Invoke(nameof(SpawnEffects), 0.017f);
-
-        #region Damage Animation
-
-        healthBar.SetActive(true);
-        healthBarFadeTimer = 3f;
-
-        if (enemyStance != null)
+        if (enemyMovement.grounded)
         {
-            if (enemyStance.heavyDamage)
+            if (currentHealth > 0f)
             {
-                isTakingDamageTimer = 0.9f;
-                anim.Play("TakeHeavyDamage");
-            }
-            else
-            {
-                isTakingDamageTimer = 0.45f;
-                enemyStance.enemyStanceAmount += 1f;
-                    
-                //randomly chooses a damage animation
-                int damageDirection = Random.Range(1, 4);
+                //picks a number between 1 and 100
+                float blockingOrDodgingChance = Random.Range(1, 100);
 
-                if (damageDirection == 1)
+                if (blockingOrDodgingChance <= parryOrDodgeChance)
                 {
-                    anim.Play("TakeDamageRight");
+                    attackState.Parry();
+                    attackState.Dodge();
                 }
-                else if (damageDirection == 2)
-                {
-                    anim.Play("TakeDamageLeft");
-                }
-                else if (damageDirection == 3)
-                {
-                    anim.Play("TakeDamage");
-                }
-            }
-        }
-        else
-        {
-            //randomly chooses a damage animation
-            int damageDirection = Random.Range(1, 4);
-
-            if (damageDirection == 1)
-            {
-                anim.Play("TakeDamageRight");
-            }
-            else if (damageDirection == 2)
-            {
-                anim.Play("TakeDamageLeft");
-            }
-            else if (damageDirection == 3)
-            {
-                anim.Play("TakeDamage");
             }
         }
 
         #endregion
 
-        #region Getting Out Of Stun Lock
+        currentHealth -= damage;
+        enemyHealthUI.SetCurrentHealth(currentHealth);
 
-        //picks a number between 1 and 100
-        float blockingOrDodgingChance = Random.Range(1, 100);
+        Invoke(nameof(SpawnEffects), 0.017f);
 
-        if (blockingOrDodgingChance <= 25f)
+        if (currentHealth > 0f)
+        { 
+            healthBar.SetActive(true);
+            healthBarFadeTimer = 3f;
+        }
+        else
         {
-            attackState.Parry();
-            attackState.Dodge();
+            healthBarFadeTimer = 0f;
+        }
+
+        #region Damage Animation
+
+        if (enemyMovement.grounded)
+        {
+            if (!playerAnimController.canLaunchUp)
+            {
+                if (enemyStance != null)
+                {
+                    if (enemyStance.heavyDamage)
+                    {
+                        isTakingDamageTimer = 0.9f;
+                        anim.Play("TakeHeavyDamage");
+                        enemyStance.enemyStanceAmount = 0f;
+                    }
+                    else
+                    {
+                        isTakingDamageTimer = 0.45f;
+                        enemyStance.enemyStanceAmount += 1f;
+
+                        //randomly chooses a damage animation
+                        int damageDirection = Random.Range(1, 4);
+
+                        if (damageDirection == 1)
+                        {
+                            anim.Play("TakeDamageRight");
+                        }
+                        else if (damageDirection == 2)
+                        {
+                            anim.Play("TakeDamageLeft");
+                        }
+                        else if (damageDirection == 3)
+                        {
+                            anim.Play("TakeDamage");
+                        }
+                    }
+                }
+                else
+                {
+                    //randomly chooses a damage animation
+                    int damageDirection = Random.Range(1, 4);
+
+                    if (damageDirection == 1)
+                    {
+                        anim.Play("TakeDamageRight");
+                    }
+                    else if (damageDirection == 2)
+                    {
+                        anim.Play("TakeDamageLeft");
+                    }
+                    else if (damageDirection == 3)
+                    {
+                        anim.Play("TakeDamage");
+                    }
+                }
+            }
+            else
+            {
+                isLaunched = true;
+                rb.AddForce(enemyManager.transform.up * 30f, ForceMode.Impulse);
+            }
+        }
+        else
+        {
+            anim.Play("AirHit");
+
+            if (playerAnim.GetBool("isGroundSlam"))
+            {
+                anim.SetBool("isAirHit", false);
+                rb.AddForce(-enemyManager.transform.up * 35f, ForceMode.Impulse);
+                anim.Play("LandDown");
+            }
+            else
+            {
+                anim.SetBool("isAirHit", true);
+                airHitTimer = 1f;
+            }
         }
 
         #endregion

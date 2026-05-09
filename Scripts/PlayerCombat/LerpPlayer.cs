@@ -14,7 +14,7 @@ public class LerpPlayer : MonoBehaviour
         playerCombatSystem = GetComponent<PlayerCombatSystem>();
         dodge = GetComponent<Dodge>();
 
-        cameraMovement = GetComponentInChildren<CameraMovement>();
+        cameraMovement = FindObjectOfType<CameraMovement>();
     }
 
     void Update()
@@ -24,7 +24,7 @@ public class LerpPlayer : MonoBehaviour
             if (cameraMovement.lockOnTargetTransform.GetComponent<EnemyHealth>().isInvincible)
                 return;
 
-            if (playerCombatSystem.canTp && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) <= 8f 
+            if (playerCombatSystem.canTp && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) <= 5.5f 
                 && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) > 0.5f)
             {
                 transform.DOMove(TargetOffset(cameraMovement.lockOnTargetTransform), 0.2f);

@@ -5,13 +5,14 @@ using UnityEngine;
 public class Parry : MonoBehaviour
 {
     public float parryWindowTime;
+    public float parryRecoveryTime;
 
     [HideInInspector]
     public bool parrying;
     [HideInInspector]
     public bool hasBeenParried;
-
-    bool hasPerformedParry;
+    [HideInInspector]
+    public bool hasPerformedParry;
 
     float parryTimer;
 
@@ -49,6 +50,9 @@ public class Parry : MonoBehaviour
         if (!playerMovementTutorial.grounded)
             return;
 
+        if (dodge.isDodging)
+            return;
+
         if (hasBeenParried)
         {
             parryTimer -= Time.deltaTime;
@@ -81,7 +85,7 @@ public class Parry : MonoBehaviour
 
     IEnumerator CanParryAgain()
     {
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.15f);
 
         hasPerformedParry = false;
     }
@@ -95,8 +99,11 @@ public class Parry : MonoBehaviour
         playerAnimatorController.PlayTargetAnimation("ParryHit", true);
 
         //handle the effects
-        Invoke("SpawnEffect", 0.11f);
+        Invoke("SpawnEffectWithSlowMo", 0.11f);
         //handle sounds
+        hasPerformedParry = true;
+        StartCoroutine(CanParryAgain());
+        parrying = false;
         soundManager.PlayTargetSound(soundManager.audioSource, soundManager.parrySFX);
     }
 
@@ -104,14 +111,13 @@ public class Parry : MonoBehaviour
     {
         //handle animation
         anim.SetBool("isAttacking", false);
-        playerAnimatorController.PlayTargetAnimation("Deflect", true);
         //handle effects
         Invoke("SpawnEffect", 0.11f);
         //handle sounds
         soundManager.PlayTargetSound(soundManager.audioSource, soundManager.parrySFX);
 
         hasBeenParried = true;
-        parryTimer = 0.4f;
+        parryTimer = parryRecoveryTime;
     }
 
     public void RotatePlayerToTarget(Transform targetTransform)
@@ -127,9 +133,14 @@ public class Parry : MonoBehaviour
 
     #region Handle Effects
 
+    void SpawnEffectWithSlowMo()
+    {
+        hitStop.HitStopEffect(0.2f, 0.15f);
+        effectsManager.SpawnTargetEffect(effectsManager.parryEffect, effectsManager.parryEffectSpawn);
+    }
+
     void SpawnEffect()
     {
-        hitStop.HitStopEffect(0.15f, 0.15f);
         effectsManager.SpawnTargetEffect(effectsManager.parryEffect, effectsManager.parryEffectSpawn);
     }
 

@@ -29,7 +29,7 @@ public class EnemyStance : MonoBehaviour
             enemyStanceAmount -= Time.deltaTime;
         }
 
-        if (enemyStanceAmount >= 2f)
+        if (enemyStanceAmount >= 4f)
         {
             heavyDamage = true;
         }

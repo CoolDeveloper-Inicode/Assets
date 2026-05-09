@@ -9,6 +9,8 @@ public class EnemyAnimatorController : MonoBehaviour
     Collider coll;
     SoundManager soundManager;
     EnemyManager enemyManager;
+    EnemyHealth enemyHealth;
+    PlayerAnimatorController playerAnimController;
 
     void Start()
     {
@@ -16,10 +18,15 @@ public class EnemyAnimatorController : MonoBehaviour
 
         rb = GetComponentInParent<Rigidbody>();
         enemyManager = GetComponentInParent<EnemyManager>();
+        enemyHealth = GetComponentInParent<EnemyHealth>();
+
 
         coll = GetComponentInChildren<Collider>();
 
         soundManager = FindObjectOfType<SoundManager>();
+        playerAnimController = FindObjectOfType<PlayerAnimatorController>();
+
+        anim.SetBool("isAirHit", false);
     }
 
     #region Animation Events
@@ -44,12 +51,43 @@ public class EnemyAnimatorController : MonoBehaviour
         soundManager.PlayTargetSound(soundManager.audioSource, soundManager.swordSwingSFX);
     }
 
+    public void PerfectDodgeDetector()
+    {
+        StartCoroutine(PerfectDodge());
+    }
+
+    public void TpEnemy()
+    {
+        if (Vector3.Distance(enemyManager.transform.position, enemyManager.targetTransform.position) >= 2.3f)
+        {
+            enemyManager.rb.AddForce(enemyManager.transform.forward * 70f, ForceMode.Impulse);
+        }
+    }
+
+    public void DisableLaunch()
+    {
+        playerAnimController.canLaunchUp = false;
+    }
+
+    public void IsInvincible()
+    {
+        enemyHealth.isInvincible = true;
+    }
+
+    public void IsntInvincible()
+    {
+        enemyHealth.isInvincible = false;
+    }
+
     #endregion
 
     #region Functions
 
     private void OnAnimatorMove()
     {
+        if (!anim.applyRootMotion)
+            return;
+
         if(Mathf.Approximately(Time.deltaTime, 0f)) 
             return;
 
@@ -57,7 +95,22 @@ public class EnemyAnimatorController : MonoBehaviour
         rb.drag = 0;
         Vector3 deltaPosition = anim.deltaPosition;
         Vector3 velocity = deltaPosition / delta;
+
+        if (!anim.GetBool("isAirHit"))
+        {
+            velocity.y = rb.velocity.y;
+        }
+
         rb.velocity = velocity;
+    }
+
+    IEnumerator PerfectDodge()
+    {
+        enemyManager.perfectDodgeWindow = true;
+
+        yield return new WaitForSeconds(0.05f);
+
+        enemyManager.perfectDodgeWindow = false;
     }
 
     #endregion

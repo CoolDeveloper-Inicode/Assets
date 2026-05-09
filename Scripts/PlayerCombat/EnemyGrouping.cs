@@ -8,7 +8,7 @@ public class EnemyGrouping : MonoBehaviour
 
     void Start()
     {
-        cameraMovement = GetComponentInChildren<CameraMovement>();
+        cameraMovement = FindObjectOfType<CameraMovement>();
     }
 
     void Update()

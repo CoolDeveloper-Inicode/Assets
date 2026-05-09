@@ -16,7 +16,7 @@ MonoBehaviour:
   lightAttackDamage: 30
   heavyAttackDamage: 37
   skillAttackDamage: 47
-  damage: 35
+  damage: 37
   prefab: {fileID: 8671300058951258016, guid: 24c0e5f157594ae41945129d5e09e72a, type: 3}
   lightAttackAnimations:
   - Attack1
@@ -26,8 +26,22 @@ MonoBehaviour:
   - Attack2
   - Attack3
   - Attack4
+  lightAttackAirAnimations:
+  - AirAttack1
+  - AirAttack2
+  - AirAttack3
+  - AirAttack4
+  - AirAttack5
+  - AirAttack3
+  - AirAttack4
   heavyAttackAnimations:
   - HeavyAttack1
   - HeavyAttack2
   - HeavyAttack3
+  heavyAttackAirAnimations:
+  - HeavyAttackAir2
+  - HeavyAttackAir1
+  - HeavyAttackAir3
   skillAttackAnimation: Skill
+  launcherAttackAnimation: Launcher
+  groundSlamAnimation: GroundSlam

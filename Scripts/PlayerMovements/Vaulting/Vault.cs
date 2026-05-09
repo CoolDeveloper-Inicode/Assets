@@ -6,6 +6,7 @@ public class Vault : MonoBehaviour
 {
     [Header("Vaulting Properties")]
     public Transform vaultingPosition;
+    public float vaultingInputTime;
 
     [Header("Scripts")]
     PlayerMovementTutorial playerMovementTutorial;
@@ -13,6 +14,8 @@ public class Vault : MonoBehaviour
 
     LowerVaultingDetector lowerVaultingDetector;
     UpperVaultingDetector upperVaultingDetector;
+
+    float vaultingInputDelay;
 
     void Start()
     {
@@ -25,24 +28,36 @@ public class Vault : MonoBehaviour
 
     void Update()
     {
-        Vaulting();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            vaultingInputDelay = vaultingInputTime;
+        }
+
+        if (vaultingInputDelay > 0f)
+        {
+            Vaulting();
+            vaultingInputDelay -= Time.deltaTime;
+        }
     }
 
     void Vaulting()
     {
-        if (playerMovementTutorial.grounded)
-            return;
-
         if (lowerVaultingDetector.canVaultLower == true && upperVaultingDetector.canVaultUpper == true)
         {
-            //plays vault animation
-            anim.Play("Vault");
+            if (Physics.Raycast(vaultingPosition.position, Vector3.down, out var hit))
+            {
+                Vector3 vaultPoint = hit.point;
+                vaultPoint.y += 0.82f;
 
-            //places player on the vaulting position
-            StartCoroutine(LerpVault(vaultingPosition.position, 0.09f));
+                //plays vault animation
+                anim.Play("Vault");
 
-            //allowes player to double jump after vaulting
-            playerMovementTutorial.canDoubleJump = true;
+                //places player on the vaulting position
+                StartCoroutine(LerpVault(vaultPoint, 0.12f));
+
+                //allowes player to double jump after vaulting
+                playerMovementTutorial.canDoubleJump = true;
+            }
         }
     }
 

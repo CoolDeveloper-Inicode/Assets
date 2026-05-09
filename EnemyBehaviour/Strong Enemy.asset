@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Strong Enemy
   detectionRadius: 25
-  strafingDistance: 7
+  strafingDistance: 6
   attackingDistance: 3
   damage: 15
-  dodgingLikelyHood: 20
-  parryLikelyHood: 15
+  dodgingLikelyHood: 35
+  parryLikelyHood: 25
   rotationSpeed: 25
   isAggresive: 1
   isBoss: 0

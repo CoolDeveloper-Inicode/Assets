@@ -16,12 +16,14 @@ public class EnemyAttacks : MonoBehaviour
 
     Animator anim;
     EnemyManager enemyManager;
+    EnemyMovement enemyMovement;
 
     void Start ()
     {
         anim = GetComponentInChildren<Animator>();
 
         enemyManager = GetComponent<EnemyManager>();
+        enemyMovement = GetComponent<EnemyMovement>();
     }
 
     void Update ()
@@ -42,6 +44,9 @@ public class EnemyAttacks : MonoBehaviour
                 return;
 
             if (attackState.canParry)
+                return;
+
+            if (!enemyMovement.grounded)
                 return;
 
             int numOfEnemyAttacks = enemyActions.enemyAttacks.Count;

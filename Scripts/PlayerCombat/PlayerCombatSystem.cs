@@ -51,20 +51,28 @@ public class PlayerCombatSystem : MonoBehaviour
         if (playerHealing.isHealing)
             return;
 
-        if (parry.hasBeenParried)
-            return;
-
-        if (!playerMovementTutorial.grounded)
-            return;
-
         if (Input.GetMouseButtonDown(0))
         {
-            HandleLightAttacks();
+            if (Input.GetKey(KeyCode.S) && playerMovementTutorial.grounded)
+            {
+                HandleLauncher();
+            }
+            else
+            {
+                HandleLightAttacks();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            HandleHeavyAttack();
+            if (Input.GetKey(KeyCode.W) && !playerMovementTutorial.grounded)
+            {
+                HandleGroundSlam();
+            }
+            else
+            {
+                HandleHeavyAttack();
+            }
         }
 
         if (skillArtUI.currentSkillAmount >= skillArtUI.maxSkillAmount)
@@ -111,7 +119,16 @@ public class PlayerCombatSystem : MonoBehaviour
         playerAnimatorController.canDoCombo = false;
         canTp = true;
         anim.SetBool("isAttacking", true);
-        playerAnimatorController.PlayTargetAnimation(currentWeapon.lightAttackAnimations[lightAttackComboCounter], true);
+
+        if (playerMovementTutorial.grounded)
+        {
+            playerAnimatorController.PlayTargetAnimation(currentWeapon.lightAttackAnimations[lightAttackComboCounter], true);
+        }
+        else
+        {
+            playerAnimatorController.PlayTargetAnimation(currentWeapon.lightAttackAirAnimations[lightAttackComboCounter], true);
+        }
+
         lightAttackComboCounter++;
         currentWeapon.damage = currentWeapon.lightAttackDamage;
         attackTimer = 0.8f;
@@ -119,28 +136,57 @@ public class PlayerCombatSystem : MonoBehaviour
         //handle effects
         Invoke("PlaySoundEffect", 0.1f);
 
-        if (lightAttackComboCounter >= currentWeapon.lightAttackAnimations.Count)
+        if (playerMovementTutorial.grounded)
         {
-            lightAttackComboCounter = 0;
+            if (lightAttackComboCounter >= currentWeapon.lightAttackAnimations.Count)
+            {
+                lightAttackComboCounter = 0;
+            }
+        }
+        else
+        {
+            if (lightAttackComboCounter >= currentWeapon.lightAttackAirAnimations.Count)
+            {
+                lightAttackComboCounter = 0;
+            }
         }
     }
 
     void HandleHeavyAttack()
     {
         if (!playerAnimatorController.canDoCombo)
-            return;           
+            return;
 
         playerAnimatorController.canDoCombo = false;
         canTp = true;
         anim.SetBool("isAttacking", true);
-        playerAnimatorController.PlayTargetAnimation(currentWeapon.heavyAttackAnimations[heavyAttackComboCounter], true);
+
+        if (playerMovementTutorial.grounded)
+        {
+            playerAnimatorController.PlayTargetAnimation(currentWeapon.heavyAttackAnimations[heavyAttackComboCounter], true);
+        }
+        else
+        {
+            playerAnimatorController.PlayTargetAnimation(currentWeapon.heavyAttackAirAnimations[heavyAttackComboCounter], true);
+        }
+
         heavyAttackComboCounter++;
         currentWeapon.damage = currentWeapon.heavyAttackDamage;
         attackTimer = 0.8f;
 
-        if (heavyAttackComboCounter >= currentWeapon.heavyAttackAnimations.Count)
+        if (playerMovementTutorial.grounded)
         {
-            heavyAttackComboCounter = 0;
+            if (heavyAttackComboCounter >= currentWeapon.heavyAttackAnimations.Count)
+            {
+                heavyAttackComboCounter = 0;
+            }
+        }
+        else
+        {
+            if (heavyAttackComboCounter >= currentWeapon.heavyAttackAirAnimations.Count)
+            {
+                heavyAttackComboCounter = 0;
+            }
         }
     }
 
@@ -154,6 +200,28 @@ public class PlayerCombatSystem : MonoBehaviour
         //handle UI
         skillArtUI.currentSkillAmount = 0f;
         skillArtUI.playerUI.SetCurrentHealth(skillArtUI.currentSkillAmount);
+    }
+
+    void HandleLauncher()
+    {
+        if (!playerAnimatorController.canDoCombo)
+            return;
+
+        playerAnimatorController.canDoCombo = false;
+        anim.SetBool("isAttacking", true);
+        playerAnimatorController.PlayTargetAnimation(currentWeapon.launcherAttackAnimation, true);
+        currentWeapon.damage = currentWeapon.lightAttackDamage;
+    }
+
+    void HandleGroundSlam()
+    {
+        if (!playerAnimatorController.canDoCombo)
+            return;
+
+        playerAnimatorController.canDoCombo = false;
+        anim.SetBool("isAttacking", true);
+        playerAnimatorController.PlayTargetAnimation(currentWeapon.groundSlamAnimation, true);
+        currentWeapon.damage = currentWeapon.heavyAttackDamage;
     }
 
     #endregion

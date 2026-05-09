@@ -10,6 +10,9 @@ public class AttackState : State
     public EnemyHealth enemyHealth;
     public DeadState deadState;
     public PlayerCombatSystem playerCombatSystem;
+    public EnemyMovement enemyMovement;
+    public AirState airState;
+    public LaunchState launchState;
 
     [HideInInspector]
     public bool canParry;
@@ -21,8 +24,14 @@ public class AttackState : State
 
     public override State RunCurrentState()
     {
-        if (enemyHealth.isDead)
+        if (enemyHealth.isDead || enemyHealth.currentHealth <= 0f)
             return deadState;
+
+        if (enemyHealth.isLaunched)
+            return launchState;
+
+        if (!enemyMovement.grounded)
+            return airState;
 
         //determines the distance from the target
         float distanceFromTarget = Vector3.Distance(enemy.transform.position, enemy.targetTransform.position);
@@ -51,7 +60,7 @@ public class AttackState : State
         #endregion
 
         #region Handle Switching States
-        
+
         if (distanceFromTarget > enemy.enemyType.attackingDistance && !hasPerformedDodge)
         {
             return combatStanceState;
@@ -76,6 +85,12 @@ public class AttackState : State
 
     public void Dodge()
     {
+        if (enemyHealth.isDead || enemyHealth.currentHealth <= 0f)
+            return;
+
+        if (!enemyMovement.grounded)
+            return;
+
         float dodgeChance = Random.Range(1, 100);
 
         int dodgeDirection = Random.Range(1, 4);
@@ -85,14 +100,17 @@ public class AttackState : State
             if (dodgeDirection == 1)
             {
                 anim.Play("DodgeRight");
+                enemy.rb.AddForce(enemy.transform.right * 40f, ForceMode.Impulse);
             }
             else if (dodgeDirection == 2)
             {
                 anim.Play("DodgeLeft");
+                enemy.rb.AddForce(-enemy.transform.right * 40f, ForceMode.Impulse);
             }
             else if (dodgeDirection == 3)
             {
                 anim.Play("DodgeBack");
+                enemy.rb.AddForce(-enemy.transform.forward * 40f, ForceMode.Impulse);
             }
 
             hasPerformedDodge = true;
@@ -103,7 +121,7 @@ public class AttackState : State
 
     IEnumerator ResetDodge()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.35f);
 
         rollForDodgeChance = false;
         hasPerformedDodge = false;
@@ -116,6 +134,12 @@ public class AttackState : State
 
     public void Parry()
     {
+        if (enemyHealth.isDead || enemyHealth.currentHealth <= 0f)
+            return;
+
+        if (!enemyMovement.grounded)
+            return;
+
         float parryChance = Random.Range(1, 100);
 
         if (parryChance <= enemy.enemyType.parryLikelyHood)

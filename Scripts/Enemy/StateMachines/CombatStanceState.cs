@@ -10,6 +10,8 @@ public class CombatStanceState : State
     public ChaseState chaseState;
     public EnemyHealth enemyHealth;
     public DeadState deadState;
+    public EnemyMovement enemyMovement;
+    public AirState airState;
 
     [HideInInspector]
     public bool rollForStrafeChance;
@@ -18,9 +20,11 @@ public class CombatStanceState : State
 
     public override State RunCurrentState()
     {
-
-        if (enemyHealth.isDead)
+        if (enemyHealth.isDead || enemyHealth.currentHealth <= 0f)
             return deadState;
+
+        if (!enemyMovement.grounded)
+            return airState;
 
         //determines the distance from the player
         float distanceFromTarget = Vector3.Distance(enemy.transform.position, enemy.targetTransform.position);
@@ -61,7 +65,7 @@ public class CombatStanceState : State
         {
             return this;
         }
-        
+
         #endregion
     }
 

@@ -20,7 +20,15 @@ public class Weapon : ScriptableObject
 
     public List<string> lightAttackAnimations;
 
+    public List<string> lightAttackAirAnimations;
+
     public List<string> heavyAttackAnimations;
 
+    public List<string> heavyAttackAirAnimations;
+
     public string skillAttackAnimation;
+
+    public string launcherAttackAnimation;
+
+    public string groundSlamAnimation;
 }

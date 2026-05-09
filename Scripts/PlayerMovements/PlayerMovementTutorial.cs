@@ -54,6 +54,8 @@ public class PlayerMovementTutorial : MonoBehaviour
     Rigidbody rb;
     CameraMovement cameraMovement;
     Slide slide;
+    LowerVaultingDetector lowerVaultingDetector;
+    UpperVaultingDetector upperVaultingDetector;
 
     [HideInInspector]
     public bool canDoubleJump;
@@ -69,8 +71,10 @@ public class PlayerMovementTutorial : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         dodge = GetComponent<Dodge>();
         slide = GetComponent<Slide>();
-        cameraMovement = GetComponentInChildren<CameraMovement>();
+        cameraMovement = FindObjectOfType<CameraMovement>();
         anim = GetComponentInChildren<Animator>();
+        lowerVaultingDetector = GetComponentInChildren<LowerVaultingDetector>();
+        upperVaultingDetector = GetComponentInChildren<UpperVaultingDetector>();
         rb.freezeRotation = true;
 
         readyToJump = true;
@@ -124,12 +128,12 @@ public class PlayerMovementTutorial : MonoBehaviour
                 {
                     anim.SetFloat("Vertical", 2f, 0.2f, Time.deltaTime);
                     anim.SetFloat("Horizontal", 0f, 0.2f, Time.deltaTime);
-                    desiredMoveSpeed = sprintSpeed;
+                    StartCoroutine(LerpFloat(sprintSpeed, 0.12f));
                     isSprinting = true;
                 }
                 else if (!dodge.canSprint)
                 {
-                    desiredMoveSpeed = walkSpeed;
+                    StartCoroutine(LerpFloat(walkSpeed, 0.12f));
                     isSprinting = false;
 
                     if (cameraMovement.lockOnFlag)
@@ -216,13 +220,15 @@ public class PlayerMovementTutorial : MonoBehaviour
         // when to jump
         if(Input.GetKey(jumpKey) && readyToJump && grounded)
         {
+            if (lowerVaultingDetector.canVaultLower == true && upperVaultingDetector.canVaultUpper == true)
+                return;
+
             if (!isDoubleJumping)
             {
                 anim.SetTrigger("TakeOf");
             }
 
             readyToJump = false;
-            StartCoroutine(TakeOf());
             canDoubleJump = true;
         }
 
@@ -230,6 +236,9 @@ public class PlayerMovementTutorial : MonoBehaviour
 
         if(Input.GetKeyDown(jumpKey) && !grounded && canDoubleJump)
         {
+            if (lowerVaultingDetector.canVaultLower == true && upperVaultingDetector.canVaultUpper == true)
+                return;
+
             anim.CrossFade("DoubleJump", 0.1f);
 
             if (grounded)
@@ -238,7 +247,7 @@ public class PlayerMovementTutorial : MonoBehaviour
             isDoubleJumping = true;
             canDoubleJump = false;
             readyToJump = false;
-            StartCoroutine(TakeOf());
+            StartCoroutine(DoubleJump());
             doubleJumpTimer = 0.26f;
         }
 
@@ -277,6 +286,9 @@ public class PlayerMovementTutorial : MonoBehaviour
     private void MovePlayer()
     {
         if (anim.GetBool("IsInteracting"))
+            return;
+
+        if (anim.GetBool("isLanding"))
             return;
 
         // calculate movement direction
@@ -333,6 +345,7 @@ public class PlayerMovementTutorial : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        rb.AddForce(moveDirection * 10f, ForceMode.Impulse);
     }
 
     private void ResetJump()
@@ -358,9 +371,16 @@ public class PlayerMovementTutorial : MonoBehaviour
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 
-    IEnumerator TakeOf()
+    public void TakeOf()
     {
-        yield return new WaitForSeconds(0.09f);
+        Jump();
+
+        Invoke(nameof(ResetJump), jumpCooldown);
+    }
+
+    IEnumerator DoubleJump()
+    {
+        yield return new WaitForSeconds(0.05f);
 
         Jump();
 
@@ -390,5 +410,21 @@ public class PlayerMovementTutorial : MonoBehaviour
         }
 
         speed = desiredMoveSpeed;
+    }
+
+    IEnumerator LerpFloat(float targetFloat, float duration)
+    {
+        float time = 0f;
+        float startFloat = desiredMoveSpeed;
+
+        while (time < duration)
+        {
+            desiredMoveSpeed = Mathf.Lerp(startFloat, targetFloat, time / duration);
+            time += Time.deltaTime;
+
+            yield return null;
+        }
+
+        desiredMoveSpeed = targetFloat;
     }
 }
