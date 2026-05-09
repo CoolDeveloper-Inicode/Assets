@@ -4467,7 +4467,7 @@ MonoBehaviour:
   walkSpeed: 16
   sprintSpeed: 19
   slidingSpeed: 30
-  speedMultiplier: 3
+  speedMultiplier: 1.5
   groundDrag: 5
   jumpForce: 20
   jumpCooldown: 0.87
