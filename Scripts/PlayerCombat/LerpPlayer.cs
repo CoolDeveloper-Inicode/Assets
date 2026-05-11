@@ -21,10 +21,10 @@ public class LerpPlayer : MonoBehaviour
     {
         if (cameraMovement.lockOnTargetTransform != null)
         {
-            if (cameraMovement.lockOnTargetTransform.GetComponent<EnemyHealth>().isInvincible)
+            if (cameraMovement.lockOnTargetTransform.GetComponentInChildren<AttackState>().hasPerformedDodge)
                 return;
 
-            if (playerCombatSystem.canTp && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) <= 5.5f 
+            if (playerCombatSystem.canTp && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) <= 6f 
                 && Vector3.Distance(transform.position, cameraMovement.lockOnTargetTransform.position) > 0.5f)
             {
                 transform.DOMove(TargetOffset(cameraMovement.lockOnTargetTransform), 0.2f);

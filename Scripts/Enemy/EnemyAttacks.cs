@@ -52,12 +52,20 @@ public class EnemyAttacks : MonoBehaviour
             if (enemyManager.isBlocking)
                 return;
 
-            int numOfEnemyAttacks = enemyActions.enemyAttacks.Count;
+            if (Vector3.Distance(enemyManager.transform.position, enemyManager.targetTransform.position) <= enemyManager.enemyType.nearAttackDistance)
+            {
+                int numOfEnemyAttacks = enemyActions.enemyAttacks.Count;
 
-            int randomAttackPicker = Random.Range(0, numOfEnemyAttacks);
+                int randomAttackPicker = Random.Range(0, numOfEnemyAttacks);
 
-            anim.SetBool("isAttacking", true);
-            anim.CrossFade(enemyActions.enemyAttacks[randomAttackPicker], 0.1f);
+                anim.SetBool("isAttacking", true);
+                anim.CrossFade(enemyActions.enemyAttacks[randomAttackPicker], 0.1f);
+            }
+            else if (Vector3.Distance(enemyManager.transform.position, enemyManager.targetTransform.position) <= enemyManager.enemyType.lungingAttackDistance)
+            {
+                anim.SetBool("isAttacking", true);
+                anim.CrossFade(enemyActions.lungingAttack, 0.1f);
+            }
         }
     }
 }

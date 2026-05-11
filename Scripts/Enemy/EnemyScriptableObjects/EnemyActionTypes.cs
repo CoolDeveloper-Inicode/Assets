@@ -6,4 +6,6 @@ using UnityEngine;
 public class EnemyActionTypes : ScriptableObject
 {
     public List<string> enemyAttacks;
+
+    public string lungingAttack;
 }

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyAttacks:
   - Attack1
-  - Attack2
   - Attack3
+  lungingAttack: Attack2

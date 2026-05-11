@@ -21,8 +21,8 @@ public class AttackState : State
 
     [HideInInspector]
     public bool rollForParryChance;
-
-    bool hasPerformedDodge;
+    [HideInInspector]
+    public bool hasPerformedDodge;
 
     public override State RunCurrentState()
     {
@@ -111,15 +111,22 @@ public class AttackState : State
             hasPerformedDodge = true;
             enemyHealth.isInvincible = true;
             StartCoroutine(ResetDodge());
+            StartCoroutine(ResetInvincibility());
         }
     }
 
     IEnumerator ResetDodge()
     {
-        yield return new WaitForSeconds(0.35f);
+        yield return new WaitForSeconds(0.7f);
 
         rollForDodgeChance = false;
         hasPerformedDodge = false;
+    }
+
+    IEnumerator ResetInvincibility()
+    {
+        yield return new WaitForSeconds(0.35f);
+
         enemyHealth.isInvincible = false;
     }
 

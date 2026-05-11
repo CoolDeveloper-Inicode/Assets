@@ -15,11 +15,13 @@ MonoBehaviour:
   enemyName: Enemy
   detectionRadius: 15
   strafingDistance: 6
-  attackingDistance: 3
+  attackingDistance: 3.6
+  lungingAttackDistance: 3.6
+  nearAttackDistance: 3
   damage: 15
   dodgingLikelyHood: 20
   parryLikelyHood: 10
-  blockingLimit: 1
+  blockingLimit: 2
   rotationSpeed: 25
   isAggresive: 0
   isBoss: 0

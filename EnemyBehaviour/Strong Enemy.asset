@@ -15,11 +15,13 @@ MonoBehaviour:
   enemyName: Strong Enemy
   detectionRadius: 25
   strafingDistance: 6
-  attackingDistance: 3
+  attackingDistance: 3.6
+  lungingAttackDistance: 3.6
+  nearAttackDistance: 3
   damage: 15
   dodgingLikelyHood: 30
   parryLikelyHood: 20
-  blockingLimit: 2
+  blockingLimit: 4
   rotationSpeed: 25
   isAggresive: 1
   isBoss: 0

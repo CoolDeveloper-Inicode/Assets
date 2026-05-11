@@ -13,6 +13,10 @@ public class EnemyPersonalities : ScriptableObject
 
     public float attackingDistance;
 
+    public float lungingAttackDistance;
+
+    public float nearAttackDistance;
+
     public float damage;
 
     public float dodgingLikelyHood;

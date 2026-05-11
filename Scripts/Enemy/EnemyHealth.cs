@@ -231,7 +231,7 @@ public class EnemyHealth : MonoBehaviour
             }
             else
             {
-                //LAUNGER
+                //LAUNCER
                 isLaunched = true;
                 rb.AddForce(enemyManager.transform.up * 30f, ForceMode.Impulse);
             }
@@ -243,8 +243,16 @@ public class EnemyHealth : MonoBehaviour
 
             if (playerAnim.GetBool("isGroundSlam"))
             {
+                RaycastHit hit;
+
+                if (Physics.Raycast(enemyManager.transform.position, Vector3.down, out hit, 40f, enemyMovement.groundLayer))
+                {
+                    Vector3 velocity = new Vector3(0f, 0f, 0f);
+
+                    enemyManager.transform.position = Vector3.SmoothDamp(enemyManager.transform.position, hit.point, ref velocity, 0.005f);
+                }
+
                 anim.SetBool("isAirHit", false);
-                rb.AddForce(-enemyManager.transform.up * 35f, ForceMode.Impulse);
                 anim.Play("LandDown");
             }
             else
