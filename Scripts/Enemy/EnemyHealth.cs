@@ -177,6 +177,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (enemyMovement.grounded)
         {
+            //HIT ON GROUND
             if (!playerAnimController.canLaunchUp)
             {
                 if (enemyStance != null)
@@ -230,12 +231,14 @@ public class EnemyHealth : MonoBehaviour
             }
             else
             {
+                //LAUNGER
                 isLaunched = true;
                 rb.AddForce(enemyManager.transform.up * 30f, ForceMode.Impulse);
             }
         }
         else
         {
+            //HIT IN AIR
             anim.Play("AirHit");
 
             if (playerAnim.GetBool("isGroundSlam"))

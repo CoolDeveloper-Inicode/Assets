@@ -544144,13 +544144,6 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.675
-    functionName: SetLaunchBool
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.675
     functionName: SetGroundSlamBool
     data: 
     objectReferenceParameter: {fileID: 0}

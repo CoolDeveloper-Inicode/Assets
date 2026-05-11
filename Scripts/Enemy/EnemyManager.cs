@@ -19,12 +19,19 @@ public class EnemyManager : MonoBehaviour
     public bool perfectDodgeWindow;
 
     [HideInInspector]
+    public int blockAmount;
+
+    [HideInInspector]
+    public bool isBlocking;
+
+    [HideInInspector]
     public Rigidbody rb;
 
     ChaseState chaseState;
     CameraMovement cameraMovement;
     HitStop hitStop;
     Dodge dodge;
+    PlayerDamage playerDamage;
 
     void Start()
     {
@@ -33,6 +40,7 @@ public class EnemyManager : MonoBehaviour
         chaseState = GetComponentInChildren<ChaseState>();
 
         cameraMovement = FindObjectOfType<CameraMovement>();
+        playerDamage = FindObjectOfType<PlayerDamage>();
         hitStop = FindObjectOfType<HitStop>();
         dodge = FindObjectOfType<Dodge>();
     }
@@ -54,6 +62,11 @@ public class EnemyManager : MonoBehaviour
                     hitStop.HitStopEffect(0.2f, 0.089f);
                 }
             }
+        }
+
+        if (playerDamage.blockingTime <= 0f)
+        {
+            isBlocking = false;
         }
     }
 }

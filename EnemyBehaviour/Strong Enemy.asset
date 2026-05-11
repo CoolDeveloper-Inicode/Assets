@@ -17,8 +17,9 @@ MonoBehaviour:
   strafingDistance: 6
   attackingDistance: 3
   damage: 15
-  dodgingLikelyHood: 35
-  parryLikelyHood: 25
+  dodgingLikelyHood: 30
+  parryLikelyHood: 20
+  blockingLimit: 2
   rotationSpeed: 25
   isAggresive: 1
   isBoss: 0

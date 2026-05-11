@@ -19,6 +19,8 @@ public class EnemyPersonalities : ScriptableObject
 
     public float parryLikelyHood;
 
+    public float blockingLimit;
+
     public float rotationSpeed;
 
     public bool isAggresive;

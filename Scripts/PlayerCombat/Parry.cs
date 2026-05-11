@@ -10,8 +10,6 @@ public class Parry : MonoBehaviour
     [HideInInspector]
     public bool parrying;
     [HideInInspector]
-    public bool hasBeenParried;
-    [HideInInspector]
     public bool hasPerformedParry;
 
     float parryTimer;
@@ -53,21 +51,10 @@ public class Parry : MonoBehaviour
         if (dodge.isDodging)
             return;
 
-        if (hasBeenParried)
-        {
-            parryTimer -= Time.deltaTime;
-
-            if (parryTimer <= 0)
-            {
-                hasBeenParried = false;
-            }
-        }
-
         if (Input.GetMouseButtonDown(1))
         {
             hasPerformedParry = true;
             parrying = true;
-            hasBeenParried = false;
             playerAnimatorController.PlayTargetAnimation("Parry", true);
             StartCoroutine(ResetParry());
             StartCoroutine(CanParryAgain());
@@ -115,9 +102,6 @@ public class Parry : MonoBehaviour
         Invoke("SpawnEffect", 0.11f);
         //handle sounds
         soundManager.PlayTargetSound(soundManager.audioSource, soundManager.parrySFX);
-
-        hasBeenParried = true;
-        parryTimer = parryRecoveryTime;
     }
 
     public void RotatePlayerToTarget(Transform targetTransform)

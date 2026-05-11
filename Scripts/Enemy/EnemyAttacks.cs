@@ -43,10 +43,13 @@ public class EnemyAttacks : MonoBehaviour
             if (isTakingDamage)
                 return;
 
-            if (attackState.canParry)
+            if (anim.GetBool("isDefending"))
                 return;
 
             if (!enemyMovement.grounded)
+                return;
+
+            if (enemyManager.isBlocking)
                 return;
 
             int numOfEnemyAttacks = enemyActions.enemyAttacks.Count;

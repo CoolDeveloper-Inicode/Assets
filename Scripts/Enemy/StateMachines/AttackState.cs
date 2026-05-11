@@ -18,7 +18,9 @@ public class AttackState : State
     public bool canParry;
 
     bool rollForDodgeChance;
-    bool rollForParryChance;
+
+    [HideInInspector]
+    public bool rollForParryChance;
 
     bool hasPerformedDodge;
 
@@ -93,24 +95,17 @@ public class AttackState : State
 
         float dodgeChance = Random.Range(1, 100);
 
-        int dodgeDirection = Random.Range(1, 4);
+        int dodgeDirection = Random.Range(1, 3);
 
         if (dodgeChance <= enemy.enemyType.dodgingLikelyHood)
         {
             if (dodgeDirection == 1)
             {
                 anim.Play("DodgeRight");
-                enemy.rb.AddForce(enemy.transform.right * 40f, ForceMode.Impulse);
             }
             else if (dodgeDirection == 2)
             {
                 anim.Play("DodgeLeft");
-                enemy.rb.AddForce(-enemy.transform.right * 40f, ForceMode.Impulse);
-            }
-            else if (dodgeDirection == 3)
-            {
-                anim.Play("DodgeBack");
-                enemy.rb.AddForce(-enemy.transform.forward * 40f, ForceMode.Impulse);
             }
 
             hasPerformedDodge = true;
@@ -145,16 +140,7 @@ public class AttackState : State
         if (parryChance <= enemy.enemyType.parryLikelyHood)
         {
             canParry = true;
-            StartCoroutine(ResetParry());
         }
-    }
-
-    IEnumerator ResetParry()
-    {
-        yield return new WaitForSeconds(0.25f);
-
-        canParry = false;
-        rollForParryChance = false;
     }
 
     #endregion
